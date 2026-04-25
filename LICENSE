@@ -1,0 +1,72 @@
+ORAC-QNode Proprietary License
+Version 1.0 — 2026
+
+Copyright (c) 2026 Dimitar Kretski, Varna, Bulgaria
+All rights reserved.
+
+DEFINITIONS
+
+"Software" means all source code, header files, firmware, scripts,
+documentation, and associated materials in this repository.
+
+"Author" means Dimitar Kretski, the sole copyright holder.
+
+"Commercial Use" means any use of the Software, in whole or in part,
+for direct or indirect commercial advantage or monetary compensation,
+including but not limited to: integration into commercial products,
+use in paid services, use in revenue-generating research, or use in
+products sold to third parties.
+
+"Academic Use" means use by accredited educational institutions or
+non-profit research organizations solely for non-commercial research
+and teaching purposes, with proper attribution.
+
+GRANT OF RIGHTS
+
+1. EVALUATION LICENSE
+   You may download, compile, and run the Software for personal
+   evaluation and non-commercial testing purposes only. No
+   redistribution is permitted under this clause.
+
+2. ACADEMIC LICENSE
+   Academic Use is permitted free of charge provided that:
+   (a) All publications, presentations, or reports that use results
+       obtained with this Software cite the DOI:
+       10.5281/zenodo.19019599
+   (b) The Author is notified of the use at kretski1@gmail.com
+   (c) No commercial benefit is derived from the use
+
+3. COMMERCIAL LICENSE
+   Commercial Use requires a separate written license agreement with
+   the Author. To obtain a commercial license, contact:
+   kretski1@gmail.com
+
+RESTRICTIONS
+
+- You may NOT redistribute, sublicense, or sell copies of the Software
+- You may NOT modify and distribute the Software without written consent
+- You may NOT remove or alter copyright notices or this license
+- You may NOT use the Software in products sold to third parties without
+  a commercial license agreement
+
+INTELLECTUAL PROPERTY
+
+The vitality functional W(t) = Q(T,wear)·D − chi(wear)·T_norm −
+E_norm·ENERGY_GAIN + omega(fatigue,T)·phase·PHASE_GAIN, the
+Uncertainty-Aware term U(t) = sigma_E + alpha·(1 − f_familiarity),
+the thermal energy accumulator architecture, and all associated
+algorithms are proprietary intellectual property of Dimitar Kretski.
+
+Scientific reference: DOI 10.5281/zenodo.19019599
+
+DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+THE AUTHOR SHALL NOT BE LIABLE FOR ANY DAMAGES ARISING FROM THE
+USE OF THIS SOFTWARE.
+
+For licensing inquiries:
+Dimitar Kretski
+kretski1@gmail.com
+github.com/Kretski
+Varna, Bulgaria
