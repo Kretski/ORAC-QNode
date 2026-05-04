@@ -14,6 +14,12 @@ ORAC-QNode is a deterministic real-time vitality controller that protects the **
 
 -Validated on ET-MDC1 data. See DOI: 10.5281/zenodo.19959346--
 
+[![GCN Schema: v7.0.0](https://img.shields.io/badge/NASA%20GCN%20Schema-v7.0.0-orange.svg)](https://gcn.nasa.gov/docs/schema)
+
+> 🚀 **Universal Interoperability:** Now supporting NASA GCN Schema v7.0.0. ORAC-QNode can generate standardized JSON alerts for hardware anomalies, ready for Kafka-based streaming environments.
+
+---
+
 ## What It Does
 
 Quantum hardware is sensitive to three physical disturbances:
