@@ -12,7 +12,7 @@ ORAC-QNode is a deterministic real-time vitality controller that protects the **
 [![Latency: 535ns](https://img.shields.io/badge/Latency-535ns-green.svg)]()
 [![Version: v8](https://img.shields.io/badge/Version-v8-purple.svg)]()
 
----
+-Validated on ET-MDC1 data. See DOI: 10.5281/zenodo.19959346--
 
 ## What It Does
 
