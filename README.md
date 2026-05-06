@@ -76,7 +76,7 @@ We verified that the same pipeline maintains stability ($W > 0$) across three fu
 **Core Repository:** [github.com/Kretski/ORAC-QNode](https://github.com/Kretski/ORAC-QNode)
 
 **Official Theoretical Foundation DOI:** [10.5281/zenodo.19019599](https://doi.org/10.5281/zenodo.19019599)
-*Note: This DOI links to the peer-reviewed paper "ORAC-NT v5.x: Optimal and Stable FDIR Architecture for Autonomous Spacecraft and Critical Systems". The stability metrics established in v5.x have been mathematically extended to derive the vitality $W(t)$ framework for quantum hardware protection.*
+*Note: This DOI links to the  preprint "ORAC-NT v5.x: Optimal and Stable FDIR Architecture for Autonomous Spacecraft and Critical Systems". The stability metrics established in v5.x have been mathematically extended to derive the vitality $W(t)$ framework for quantum hardware protection.*
 
 **Author:** Dimitar Kretski, Independent Researcher, Varna, Bulgaria
 
