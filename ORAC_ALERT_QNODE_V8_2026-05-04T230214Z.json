@@ -1,0 +1,28 @@
+{
+  "$schema": "https://gcn.nasa.gov/schema/main/gcn/notices/boom/alert.schema.json",
+  "alert_datetime": "2026-05-04T23:02:14Z",
+  "mission": "ORAC-Guardian",
+  "data": {
+    "targets": [
+      {
+        "event_name": "QNODE_V8",
+        "trigger_type": "THERMAL_SHOCK_120C",
+        "classification_scores": {
+          "Anomaly_Probability": 0.99,
+          "Vitality_W": 0.15
+        },
+        "hardware_telemetry": {
+          "reaction_latency_ns": 535,
+          "system_status": "VETO_TRIGGERED_RECOVERING"
+        },
+        "gcn_crossmatch": [
+          {
+            "ref_type": "QNODE_EDGE",
+            "ref_instrument": "STM32F4",
+            "ref_ID": "NODE_01"
+          }
+        ]
+      }
+    ]
+  }
+}

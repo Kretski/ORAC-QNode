@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ORAC-NT Quantum Node Guardian</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 { color: #1a1a2e; margin-bottom: 10px; }
+        .status {
+            font-size: 48px;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        .w-value {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .slider-container {
+            margin: 20px 0;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .metric {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔷 ORAC-NT Quantum Node Guardian</h1>
+    <p><strong>Sensor-agnostic stability metric</strong> <code>W(t) = Q·D – T</code><br>
+    ⚡ 535 ns latency | 💾 24 bytes RAM | 🎯 Sensor-agnostic</p>
+    
+    <div class="slider-container">
+        <label><strong>🌡️ Temperature (°C)</strong></label>
+        <input type="range" id="temp" min="25" max="120" value="45" step="1" oninput="update()">
+        <span id="tempVal">45</span>°C
+    </div>
+    
+    <div class="slider-container">
+        <label><strong>⚙️ System Load</strong></label>
+        <input type="range" id="load" min="0" max="1" value="0.5" step="0.05" oninput="update()">
+        <span id="loadVal">0.50</span>
+    </div>
+    
+    <div id="status" class="status">HEALTHY 🟢</div>
+    <div id="wValue" class="w-value">W = 1.000</div>
+    
+    <div style="margin-top: 20px;">
+        <span class="metric">💎 RESONANT (W > 0.45)</span>
+        <span class="metric">🟢 HEALTHY (W > 0.3)</span>
+        <span class="metric">🟡 WARM (W > 0)</span>
+        <span class="metric">🟠 THROTTLE (W > -0.7)</span>
+        <span class="metric">🔴 DEAD (W ≤ -0.7)</span>
+    </div>
+    
+    <footer>
+        <strong>✅ Experimental validation</strong> | 3 sensors (DS18B20, MPU6050, NV-center) at 120°C spike → W1≈W2≈W3<br>
+        🔗 <a href="https://github.com/Kretski/ORAC-QNode" target="_blank">GitHub</a> | DOI: 10.5281/zenodo.19019599<br>
+        Dimitar Kretski | kretski1@gmail.com
+    </footer>
+</div>
+
+<script>
+function calculateW(temperature, load) {
+    const T_ONSET = 55;
+    const T_THROTTLE = 83;
+    
+    let T_norm = 0;
+    if (temperature > T_ONSET) {
+        T_norm = (temperature - T_ONSET) / (T_THROTTLE - T_ONSET);
+        if (T_norm > 1.38) T_norm = 1.38;
+    }
+    
+    let phase = Math.sin(Date.now() / 1000 * 0.5) * 0.098;
+    let W = 1.0 - T_norm * 0.84 - load * 0.22 + phase;
+    
+    if (W > 1) W = 1;
+    if (W < -1) W = -1;
+    
+    return W;
+}
+
+function getStatus(W) {
+    if (W <= -0.7) return { text: "DEAD 🔴", color: "#8B0000", bg: "#FFCCCC" };
+    if (W < 0) return { text: "THROTTLE 🟠", color: "#CC5500", bg: "#FFE0B2" };
+    if (W < 0.3) return { text: "WARM 🟡", color: "#B8860B", bg: "#FFF8DC" };
+    if (W < 0.45) return { text: "HEALTHY 🟢", color: "#228B22", bg: "#CCFFCC" };
+    return { text: "RESONANT 💎", color: "#006400", bg: "#90EE90" };
+}
+
+function update() {
+    let temp = parseFloat(document.getElementById('temp').value);
+    let load = parseFloat(document.getElementById('load').value);
+    
+    document.getElementById('tempVal').innerText = temp;
+    document.getElementById('loadVal').innerText = load.toFixed(2);
+    
+    let W = calculateW(temp, load);
+    let status = getStatus(W);
+    
+    document.getElementById('wValue').innerHTML = `W = ${W.toFixed(4)}`;
+    let statusDiv = document.getElementById('status');
+    statusDiv.innerHTML = status.text;
+    statusDiv.style.backgroundColor = status.bg;
+    statusDiv.style.color = status.color;
+}
+
+setInterval(update, 100);
+update();
+</script>
+</body>
+</html>
