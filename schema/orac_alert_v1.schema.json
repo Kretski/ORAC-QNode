@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/Kretski/ORAC-QNode/blob/main/schema/orac_alert_v1.schema.json",
+  "title": "ORAC Alert Schema v1.0.0",
+  "description": "Alert format for ORAC-NT / ORAC-QNode anomaly detection pipeline. Inspired by NASA GCN Notice structure.",
+  "type": "object",
+  "required": ["$schema", "schema_version", "alert_datetime", "mission", "pipeline", "data"],
+  "properties": {
+    "$schema":        { "type": "string" },
+    "schema_version": { "type": "string", "example": "1.0.0" },
+    "alert_datetime": { "type": "string", "format": "date-time" },
+    "mission":        { "type": "string", "example": "ORAC-Guardian" },
+    "pipeline":       { "type": "string", "example": "ORAC-NT / ORAC-QNode" },
+    "author":         { "type": "string" },
+    "data": {
+      "type": "object",
+      "required": ["targets"],
+      "properties": {
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["event_name", "trigger_type", "classification_scores", "hardware_telemetry"],
+            "properties": {
+              "event_name":   { "type": "string" },
+              "trigger_type": { "type": "string" },
+              "classification_scores": {
+                "type": "object",
+                "properties": {
+                  "Anomaly_Probability": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "Vitality_W":          { "type": "number" }
+                }
+              },
+              "hardware_telemetry": {
+                "type": "object",
+                "properties": {
+                  "reaction_latency_ns": { "type": "number" },
+                  "system_status":       { "type": "string" }
+                }
+              },
+              "gcn_crossmatch": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "ref_type":       { "type": "string" },
+                    "ref_instrument": { "type": "string" },
+                    "ref_ID":         { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
