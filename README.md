@@ -150,6 +150,7 @@ The optimizer correctly halted during the simulated CRITICAL window ($W = -0.15$
     print(f"Final loss:   {report['final_loss']:.5f}")
 
 For real hardware integration, replace `ORACTelemetry.mock(...)` with a serial/SPI reader from `orac_single_node_v8.h`.
+<img width="802" height="691" alt="Екранна снимка_17-8-2026_183813_" src="https://github.com/user-attachments/assets/be6b78da-ae08-412f-86c9-2ee949298eb6" />Here's the scaling benchmark — the gap widens exactly where QPiAI operates
 
 * * *
 
