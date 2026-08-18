@@ -168,7 +168,7 @@ For real hardware integration, replace `ORACTelemetry.mock(...)` with a serial/S
 | `schema/` | L1  | GCN JSON schema definitions |
 
 * * *
-
+While existing shot-adaptive optimizers such as qml.ShotAdaptiveOptimizer (iCANS/Rosalin) address algorithmic measurement frugality, they remain blind to the physical state of the hardware executing the circuit. GravOptAdaptiveE_QV introduces the missing signal: real-time physical telemetry from the control layer — thermal load, component wear, and vitality score W(t) — as a first-class input to the variational optimization loop.
 ## Scientific Reference
 
 **Core Repository:** [github.com/Kretski/ORAC-QNode](https://github.com/Kretski/ORAC-QNode)
