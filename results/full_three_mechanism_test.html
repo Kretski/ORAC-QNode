@@ -1,0 +1,96 @@
+
+<div style="padding: 1rem 0">
+<h2 style="sr-only">Пълен тест на gravopt-qv — три механизма, 40 стъпки</h2>
+
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:1.5rem">
+  <div style="background:var(--surface-1);border-radius:var(--radius);padding:1rem">
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Loss начало → край</div>
+    <div style="font-size:22px;font-weight:500;color:var(--text-primary)">−0.09 → −2.19</div>
+    <div style="font-size:12px;color:var(--text-success);margin-top:2px">✓ конвергира</div>
+  </div>
+  <div style="background:var(--surface-1);border-radius:var(--radius);padding:1rem">
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Shots спестени</div>
+    <div style="font-size:22px;font-weight:500;color:var(--text-primary)">19.8%</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:2px">от 40 стъпки</div>
+  </div>
+  <div style="background:var(--surface-1);border-radius:var(--radius);padding:1rem">
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Прескочени стъпки</div>
+    <div style="font-size:22px;font-weight:500;color:var(--text-primary)">5 / 40</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:2px">W-Gate (CRITICAL)</div>
+  </div>
+</div>
+
+<div style="position:relative;width:100%;height:280px">
+  <canvas id="lossChart" role="img" aria-label="Loss крива на gravopt-qv по 40 стъпки с фазови зони"></canvas>
+</div>
+
+<div style="margin-top:1.5rem;border-top:0.5px solid var(--border);padding-top:1rem">
+  <div style="font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:8px">Три механизма — резултат</div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+    <div style="background:var(--bg-success);border-radius:var(--radius);padding:10px 12px">
+      <div style="font-size:12px;font-weight:500;color:var(--text-success)">Механизъм 1 — W-Gate</div>
+      <div style="font-size:12px;color:var(--text-success);margin-top:2px">5 стъпки прескочени при CRITICAL (W &lt; −0.12)</div>
+    </div>
+    <div style="background:var(--bg-success);border-radius:var(--radius);padding:10px 12px">
+      <div style="font-size:12px;font-weight:500;color:var(--text-success)">Механизъм 2 — Shot scaling</div>
+      <div style="font-size:12px;color:var(--text-success);margin-top:2px">512→204 shots при WARM (40% бюджет)</div>
+    </div>
+    <div style="background:var(--bg-success);border-radius:var(--radius);padding:10px 12px">
+      <div style="font-size:12px;font-weight:500;color:var(--text-success)">Механизъм 3 — Freeze</div>
+      <div style="font-size:12px;color:var(--text-success);margin-top:2px">1/4 параметъра замразени при E_norm=0.62</div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;font-size:11px;color:var(--text-muted)">
+  Синтетична cost function · parameter-shift · base_shots=512 · 40 стъпки · ibm_marrakesh W-Gate потвърден на реален QPU
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const losses = [-0.0852,-0.106,-0.1697,-0.2264,-0.2955,-0.342,-0.4462,-0.4984,-0.6135,-0.699,-0.7955,-0.8838,-0.9811,-1.0278,-1.186,-1.2538,-1.3609,-1.4161,null,null,null,null,null,-1.5382,-1.5669,-1.7034,-1.7611,-1.8222,-1.8783,-1.9508,-1.998,-2.0219,-2.049,-2.0996,-2.1057,-2.1208,-2.123,-2.147,-2.1818,-2.1872];
+const labels = Array.from({length:40},(_,i)=>i+1);
+
+const ctx = document.getElementById('lossChart');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Loss',
+      data: losses,
+      borderColor: '#2a78d6',
+      borderWidth: 2,
+      pointRadius: losses.map(v => v === null ? 0 : 3),
+      pointBackgroundColor: '#2a78d6',
+      spanGaps: false,
+      tension: 0.3,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      annotation: {},
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.raw === null ? '⛔ SKIP (W-Gate)' : `Loss: ${ctx.raw.toFixed(4)}`
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Стъпка', font: { size: 12 } },
+        ticks: { autoSkip: false, maxRotation: 0, callback: (v,i) => (i+1) % 5 === 0 ? i+1 : '' },
+        grid: { color: '#e1e0d9' }
+      },
+      y: {
+        title: { display: true, text: 'Loss', font: { size: 12 } },
+        grid: { color: '#e1e0d9' }
+      }
+    }
+  }
+});
+</script>
