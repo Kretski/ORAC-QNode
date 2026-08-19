@@ -1,0 +1,19 @@
+{
+  "backend": "ibm_marrakesh",
+  "timestamp": "2026-08-18T22:54:08.375393",
+  "n_params": 2,
+  "n_steps": 5,
+  "skipped_steps": 1,
+  "shots_saved_pct": 0.0,
+  "loss_history": [
+    -0.59375,
+    -0.4375,
+    -0.53125,
+    -0.625
+  ],
+  "final_theta": [
+    1.9517436015216811,
+    -0.38403808930179695
+  ],
+  "runtime_s": 8194.34693145752
+}
