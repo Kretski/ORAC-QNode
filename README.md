@@ -6,7 +6,9 @@
 
 ORAC-QNode is a software-defined dual-layer stack that transforms unstable quantum and peripheral controllers into industrially resilient infrastructure. It combines deterministic bare-metal protection with hardware-informed algorithmic efficiency — achieving **535 ns response latency** and up to **20%+ quantum shot savings** without machine learning or lookup tables.
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19019599.svg)](https://doi.org/10.5281/zenodo.19019599)[![License Commercial](https://img.shields.io/badge/License-Commercial-red.svg)](LICENSE)[![Platform STM32F4](https://img.shields.io/badge/Platform-STM32F4-blue.svg)]()[![Latency 535ns](https://img.shields.io/badge/Latency-535ns-green.svg)]()[![Version v8](https://img.shields.io/badge/Version-v8-purple.svg)]()[![GCN Schema v700](https://img.shields.io/badge/NASA%20GCN%20Schema-v7.0.0-orange.svg)](https://gcn.nasa.gov/docs/schema)
+> *"While existing shot-adaptive optimizers such as `qml.ShotAdaptiveOptimizer` (iCANS/Rosalin) address algorithmic measurement frugality, they remain blind to the physical state of the hardware executing the circuit. GravOptAdaptiveE_QV introduces the missing signal: real-time physical telemetry from the control layer — thermal load, component wear, and vitality score W(t) — as a first-class input to the variational optimization loop."*
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19019599.svg)](https://doi.org/10.5281/zenodo.19019599)[![PyPI](https://img.shields.io/pypi/v/gravopt-qv.svg)](https://pypi.org/project/gravopt-qv/)[![License Commercial](https://img.shields.io/badge/License-Commercial-red.svg)](LICENSE)[![Platform STM32F4](https://img.shields.io/badge/Platform-STM32F4-blue.svg)]()[![Latency 535ns](https://img.shields.io/badge/Latency-535ns-green.svg)]()[![Version v8](https://img.shields.io/badge/Version-v8-purple.svg)]()[![GCN Schema v700](https://img.shields.io/badge/NASA%20GCN%20Schema-v7.0.0-orange.svg)](https://gcn.nasa.gov/docs/schema)
 
 * * *
 
@@ -81,11 +83,13 @@ We verified that the same pipeline maintains stability ($W > 0$) across three fu
 
 `GravOptAdaptiveE_QV` is a hardware-informed quantum variational optimizer — a **Parameter Gatekeeper** for VQE, QAOA, and VQLS circuits. It consumes the physical telemetry produced by L1 ($W$, $E_{norm}$, `status`) and uses it to suppress redundant quantum evaluations before they reach the chip.
 
+**Install:** `pip install gravopt-qv` (Apache 2.0)**Preprint:** [Zenodo DOI 10.5281/zenodo.21997582](https://doi.org/10.5281/zenodo.21997582)
+
 ### Mechanism
 
-**W-Gate (shot suppression):** If $W$ drops below the HEALTHY threshold or enters CRITICAL/EMERGENCY status, the optimizer pauses the parameter update entirely — zero shots issued, $\theta$ preserved. The cryostat is protected from unnecessary thermal load during hardware stress.
+**W-Gate (shot suppression):** If $W$ drops below the CRITICAL threshold, the optimizer pauses the parameter update entirely — zero shots issued, $\theta$ preserved. The cryostat is protected from unnecessary thermal load during hardware stress.
 
-**Shot Budget Scaling:** During degraded but non-critical conditions (WARM / low-HEALTHY), the shot count is scaled proportionally to $W$:
+**Shot Budget Scaling:** During degraded but non-critical conditions, the shot count is scaled proportionally to $W$:
 
 | L1 Status | $W$ Range | Shot Budget Factor |
 | --- | --- | --- |
@@ -104,28 +108,44 @@ We verified that the same pipeline maintains stability ($W > 0$) across three fu
 | 0.50 – 0.79 | 45% frozen |
 | ≥ 0.80 | 65% frozen |
 
-**Momentum:** Classical exponential moving average for smooth convergence across gated steps.
+### ✅ Validated Results
 
-### Gradient Methods
+#### H₂ Molecular Hamiltonian (PennyLane Datasets, STO-3G, 4 qubits, 15 Pauli terms)
 
-* **`parameter_shift`** (default) — Exact quantum gradient via the parameter-shift rule. Two evaluations per parameter. Recommended for real hardware.
-* **`finite_diff`** — Finite difference approximation. Lower shot count, lower precision. Suitable for classical simulators or resource-constrained pilots.
+Real molecular Hamiltonian with known exact ground state energy — the standard benchmark for VQE optimizers.
 
-### Validated Performance (100-step simulation, 6 parameters)
+| Metric | GravOptAdaptiveE_QV | Baseline (no gating) |
+| --- | --- | --- |
+| Final energy | **−1.1378 Ha** | −1.1359 Ha |
+| Error vs exact (−1.1373 Ha) | **0.0005 Ha** | 0.0014 Ha |
+| Chemical accuracy (< 0.0016 Ha) | **✅ Achieved** | ✅ Achieved |
+| Shots saved | **13.4%** | 0%  |
+| Steps skipped (W-Gate) | **5** | 0   |
+
+The gated optimizer reached lower energy (closer to exact) than the ungated baseline, while using 13.4% fewer shots. W-Gate pausing during CRITICAL events prevents corrupted gradient estimates from degrading convergence.
+
+#### ibm_marrakesh Real QPU Validation (156-qubit superconducting processor, IBM Quantum)
 
 | Metric | Value |
 | --- | --- |
-| Loss trajectory | −1.54 → **−5.12** (monotonic convergence) |
-| Final $\theta$ | ≈ ±π (global minimum reached) |
-| Shots saved | **9,240 / 46,080 = 20.1%** |
-| Steps skipped (CRITICAL gate, steps 51–60) | **10 / 100 = 10%** |
-| Convergence after CRITICAL pause | ✅ Resumed and continued to global minimum |
+| Backend | **ibm_marrakesh** (real 156-qubit QPU) |
+| W-Gate activation | ✅ 1 step correctly skipped at W = −0.14 (CRITICAL) |
+| Loss trajectory | −0.594 → **−0.625** (converged after recovery) |
+| Date | 2026-08-18 |
 
-The optimizer correctly halted during the simulated CRITICAL window ($W = -0.15$), preserved parameter state, and resumed convergence upon hardware recovery — demonstrating the core protection loop.
+#### Scaling Benchmark (simulation, 100 steps, parameter-shift, base_shots=512)
+
+| QPU Scale | Hardware stress | Shots saved | Steps skipped |
+| --- | --- | --- | --- |
+| ~50 qubits (6 params) | 15% | **9%** | 0%  |
+| ~500 qubits (20 params) | 28% | **20%** | 8%  |
+| ~5k+ qubits (50 params) | 48% | **36%** | 18% |
+
+
 
 ### Quick Start
 
-    from GravOptAdaptiveE_QV import GravOptAdaptiveE_QV, ORACTelemetry
+    from gravopt_qv import GravOptAdaptiveE_QV, ORACTelemetry
     
     # 1. Define your variational cost function
     def my_vqe_cost(theta, shots):
@@ -150,7 +170,6 @@ The optimizer correctly halted during the simulated CRITICAL window ($W = -0.15$
     print(f"Final loss:   {report['final_loss']:.5f}")
 
 For real hardware integration, replace `ORACTelemetry.mock(...)` with a serial/SPI reader from `orac_single_node_v8.h`.
-<img width="802" height="691" alt="Екранна снимка_17-8-2026_183813_" src="https://github.com/user-attachments/assets/be6b78da-ae08-412f-86c9-2ee949298eb6" />Here's the scaling benchmark — the gap widens exactly where QPiAI operates
 
 * * *
 
@@ -159,6 +178,8 @@ For real hardware integration, replace `ORACTelemetry.mock(...)` with a serial/S
 | File | Layer | Description |
 | --- | --- | --- |
 | `GravOptAdaptiveE_QV.py` | L2  | Quantum variational parameter gatekeeper — main algorithmic engine |
+| `gravopt_qv_h2_vqe.py` | L2  | H₂ VQE molecular validation script |
+| `gravopt_qv_ibm_validation.py` | L2  | IBM Quantum real QPU validation script |
 | `GravOptAdaptiveE.py` | L2 (classical) | Edge ML co-processor optimizer — fine-grain freeze for ARM controllers |
 | `GravOptMini_v2.py` | L2 (classical) | TinyML ultra-lightweight optimizer for battery-constrained co-processors |
 | `orac_spinqit_wrapper.py` | L1  | Python bridge for SpinQit (SpinQ Gemini) integration |
@@ -167,16 +188,17 @@ For real hardware integration, replace `ORACTelemetry.mock(...)` with a serial/S
 | `orac_network_v7e.h/.ino` | L1  | Multi-node network variant |
 | `gcn_alert_generator.py` | L1  | NASA GCN Schema v7.0.0 alert generator |
 | `schema/` | L1  | GCN JSON schema definitions |
+| `results/` | —   | Validation JSON results (H₂ VQE, IBM Quantum, scaling benchmark) |
 
 * * *
-While existing shot-adaptive optimizers such as qml.ShotAdaptiveOptimizer (iCANS/Rosalin) address algorithmic measurement frugality, they remain blind to the physical state of the hardware executing the circuit. GravOptAdaptiveE_QV introduces the missing signal: real-time physical telemetry from the control layer — thermal load, component wear, and vitality score W(t) — as a first-class input to the variational optimization loop.
+
 ## Scientific Reference
 
 **Core Repository:** [github.com/Kretski/ORAC-QNode](https://github.com/Kretski/ORAC-QNode)
 
-**Official Theoretical Foundation DOI:** [10.5281/zenodo.19019599](https://doi.org/10.5281/zenodo.19019599)
+**L2 Preprint:** [10.5281/zenodo.21997582](https://doi.org/10.5281/zenodo.21997582) — *gravopt-qv: Hardware-Informed Shot Gating for Quantum Variational Optimizers*
 
-*This DOI links to the preprint "ORAC-NT v5.x: Optimal and Stable FDIR Architecture for Autonomous Spacecraft and Critical Systems". The stability metrics established in v5.x have been mathematically extended to derive the vitality $W(t)$ framework for quantum hardware protection and the GravOptAdaptiveE_QV gating logic.*
+**L1 Theoretical Foundation:** [10.5281/zenodo.19019599](https://doi.org/10.5281/zenodo.19019599) — *ORAC-NT v5.x: Optimal and Stable FDIR Architecture for Autonomous Spacecraft and Critical Systems*
 
 **Author:** Dimitar Kretski, Independent ResearcherCenter for Hydro- and Aerodynamics, Bulgarian Academy of Sciences, Varna, BulgariaORCID: [0000-0001-5108-2243](https://orcid.org/0000-0001-5108-2243)
 
