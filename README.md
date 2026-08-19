@@ -196,11 +196,12 @@ For real hardware integration, replace `ORACTelemetry.mock(...)` with a serial/S
 
 **Core Repository:** [github.com/Kretski/ORAC-QNode](https://github.com/Kretski/ORAC-QNode)
 
-**L2 Preprint:** [10.5281/zenodo.21997582](https://doi.org/10.5281/zenodo.21997582) — *gravopt-qv: Hardware-Informed Shot Gating for Quantum Variational Optimizers*
+****L2 Preprint:** [10.5281/zenodo.22004705](https://doi.org/10.5281/zenodo.22004705) — v2.0 (H₂ validation + ibm_marrakesh) — *gravopt-qv: Hardware-Informed Shot Gating for Quantum Variational Optimizers*
 
 **L1 Theoretical Foundation:** [10.5281/zenodo.19019599](https://doi.org/10.5281/zenodo.19019599) — *ORAC-NT v5.x: Optimal and Stable FDIR Architecture for Autonomous Spacecraft and Critical Systems*
 
-**Author:** Dimitar Kretski, Independent ResearcherCenter for Hydro- and Aerodynamics, Bulgarian Academy of Sciences, Varna, BulgariaORCID: [0000-0001-5108-2243](https://orcid.org/0000-0001-5108-2243)
+**Author:** Dimitar Kretski, Independent Researcher  
+Center for Hydro- and Aerodynamics..., Bulgarian Academy of Sciences, Varna, BulgariaORCID: [0000-0001-5108-2243](https://orcid.org/0000-0001-5108-2243)
 
 * * *
 
